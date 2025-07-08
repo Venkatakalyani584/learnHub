@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LearnHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container">
+  <h1 class="mt-4">Welcome to LearnHub</h1>
+  <form id="registerForm">
+    <input type="email" id="email" placeholder="Email" class="form-control my-2" required />
+    <input type="password" id="password" placeholder="Password" class="form-control my-2" required />
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+
+  <hr>
+
+  <h2>Available Courses</h2>
+  <ul id="courseList" class="list-group my-3"></ul>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+    });
+
+    async function loadCourses() {
+      const res = await fetch('http://localhost:5000/api/courses');
+      const courses = await res.json();
+      const list = document.getElementById('courseList');
+      courses.forEach(course => {
+        const li = document.createElement('li');
+        li.className = "list-group-item";
+        li.innerText = `${course.title} by ${course.instructor}`;
+        list.appendChild(li);
+      });
+    }
+
+    loadCourses();
+  </script>
+</body>
+</html>
